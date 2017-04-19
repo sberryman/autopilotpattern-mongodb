@@ -64,16 +64,18 @@ def get_environ(key, default):
 
 # ---------------------------------------------------------
 
+REPLICASET= get_environ('MONGO_REPLSET', 'joyent')
+
 SESSION_CACHE_FILE = get_environ('SESSION_CACHE_FILE', '/tmp/mongodb-session')
-SESSION_NAME = get_environ('SESSION_NAME', 'mongodb-replica-set-lock')
+SESSION_NAME = get_environ('SESSION_NAME', 'mongodb-' + REPLICASET + '-set-lock')
 SESSION_TTL = int(get_environ('SESSION_TTL', 60))
 
 # consts for node state
-PRIMARY = 'mongodb-replicaset'
+PRIMARY = 'mongodb-' + REPLICASET
 #SECONDARY = 'mongodb-secondary'
 
 # key where primary will be stored in consul
-PRIMARY_KEY = get_environ('PRIMARY_KEY', 'mongodb-primary')
+PRIMARY_KEY = get_environ('PRIMARY_KEY', PRIMARY + '-primary')
 
 # how many time to retry connecting to mongo
 # be aware that the health check may timeout before this is reached

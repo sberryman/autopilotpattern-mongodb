@@ -4,7 +4,7 @@
   "preStop": "python /usr/local/bin/manage.py pre_stop",
   "services": [
     {
-      "name": "mongodb-replicaset",
+      "name": "mongodb-{{ .MONGO_REPLSET }}",
       "port": 27017,
       "health": "python /usr/local/bin/manage.py health",
       "poll": 5,
@@ -13,7 +13,7 @@
   ],
   "backends": [
     {
-      "name": "mongodb-replicaset",
+      "name": "mongodb-{{ .MONGO_REPLSET }}",
       "poll": 10,
       "onChange": "python /usr/local/bin/manage.py on_change"
     }

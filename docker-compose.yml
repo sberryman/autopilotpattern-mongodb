@@ -1,22 +1,35 @@
 version: '2.1'
 services:
     mongodb:
-        extends:
-            file: local-compose.yml
-            service: mongodb
-        mem_limit: 4g
+        image: famished/autopilot-mongodb:0.1.0
+        command: --replSet=rs0
+        restart: always
+        mem_limit: 512m
+        ports:
+            - 27017
         labels:
             - triton.cns.services=mongodb
         links:
-          - consul:consul
+            - consul:consul
+        environment:
+            - LOG_LEVEL=DEBUG
+            - CONSUL=consul-mdb.svc.291da913-d47e-6469-b446-e45dc66a7868.us-sw-1.cns.joyent.com
         network_mode: bridge
 
     consul:
         extends:
             file: local-compose.yml
             service: consul
+        command: >
+            /usr/local/bin/containerpilot
+            /bin/consul agent -server
+                -bootstrap-expect 1
+                -config-dir=/etc/consul
+                -ui-dir /ui
         labels:
-            - triton.cns.services=consul
+            - triton.cns.services=consul-mdb
+        environment:
+            - CONSUL=consul-mdb.svc.291da913-d47e-6469-b446-e45dc66a7868.us-sw-1.cns.joyent.com
         network_mode: bridge
         dns:
             - 127.0.0.1
